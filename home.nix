@@ -46,11 +46,13 @@ in
     shellAliases = {
       ".." = "cd ..";
       add = "git add .";
+      commit = "git commit -m";
       push = "git push";
       pull = "git pull";
       m = "git switch main";
       cc = "claude --dangerously-skip-permissions";
       co = "codex --full-auto";
+      oc = "opencode --auto";
       v = "nvim";
       vim = "nvim";
     };

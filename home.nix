@@ -97,6 +97,13 @@ in
   home.file.".config/opencode/AGENTS.md".source =
     config.lib.file.mkOutOfStoreSymlink "${configRepo}/home/AGENTS.md";
 
+  # Linked file-by-file rather than as a directory: opencode also keeps
+  # node_modules/, package.json and plugins/ in here, and those are not ours
+  # to manage.
+  home.file.".config/opencode/opencode.jsonc".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${configRepo}/home/.config/opencode/opencode.jsonc";
+
   # ~/.claude/settings.json is deliberately absent. Claude Code rewrites that
   # file itself, so a symlink here gets replaced with a real file and the
   # config silently detaches.

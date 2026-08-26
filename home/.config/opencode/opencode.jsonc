@@ -1,0 +1,34 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // Named directories outside the active project that agents may consult.
+  // A reference is auto-allowed through the external-directory permission
+  // boundary, so notes are readable from any repo without a prompt. Normal
+  // read/edit permissions still apply on top.
+  "references": {
+    "brain": {
+      "path": "~/brain",
+      "description": "Personal Obsidian vault. Long-form notes, decisions, and running context: whatnot/ for work (research-platform, feature-platform, one-on-ones), rust/ and writing/ for study notes, todo/ for task lists. Consult for prior decisions, terminology, and background before asking the user to re-explain something. Do not access brain/personal/, it is off limits."
+    }
+  },
+
+  // Rules are evaluated in order and the LAST match wins, so broad rules go
+  // first and narrow rules last.
+  //
+  // The *.env entries restate opencode's built-in read defaults. Naming a
+  // "read" object risks replacing those defaults wholesale rather than
+  // merging with them, so they are repeated here to guarantee they survive.
+  "permission": {
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow",
+      "~/brain/personal/**": "deny"
+    },
+    "edit": {
+      "*": "allow",
+      "~/brain/personal/**": "deny"
+    }
+  }
+}

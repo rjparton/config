@@ -51,7 +51,6 @@
       "claude-code"
       # adopted from the pre-nix Homebrew install
       "opensuperwhisper"
-      "visual-studio-code"
     ];
   };
 }

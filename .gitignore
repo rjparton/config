@@ -1,0 +1,16 @@
+# herdr runtime artifacts. herdr writes these into its config directory while
+# running, and the directory is symlinked into this repo.
+home/.config/herdr/*.log
+home/.config/herdr/*.sock
+home/.config/herdr/session.json
+home/.config/herdr/sessions/
+home/.config/herdr/.plugins.lock
+home/.config/herdr/release-notes.json
+
+# Claude Code writes machine-local overrides here.
+.claude/settings.local.json
+
+# macOS + nix build noise
+.DS_Store
+result
+result-*

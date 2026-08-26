@@ -1,52 +1,76 @@
-# config
+# rjparton_config
 
-## MacOS Setup
-- Change capslock to ctrl
-- Keyboard > Key repeat rate > Fastest
-- Keyboard > Delay until repeat > Shortest
-- Enable key repeats, run in a terminal: `defaults write com.microsoft.VSCode ApplePressAndHoldEnabled -bool false`
+My machine configuration. Nix (via nix-darwin and home-manager) declares the
+system, the packages, and the dotfile links. Anything Nix cannot reach is listed
+under [Manual steps](#manual-steps).
 
-## Mouse Settings
-- Thumb buttons: Desktop right/left
-- Spin wheel: Mission control
-- Top: Screen capture save to clipboard
+## Bootstrap a new machine
 
-# Code Setup
-```
-git clone https://github.com/rjparton/rjparton_config "$HOME/.rjparton_config"
-"$HOME/.rjparton_config/install.sh"
+Install [Determinate Nix](https://determinate.systems/nix), then:
+
+```bash
+git clone https://github.com/rjparton/rjparton_config "$HOME/rjparton_config"
+"$HOME/rjparton_config/rebuild.sh"
 ```
 
-`install.sh` is safe to re-run — it skips packages that are already installed and
-backs up (rather than overwrites) any existing dotfile before symlinking. It:
-- Installs Homebrew if missing, and wires up `brew shellenv` in `~/.zprofile`
-- Installs `gh`, `git`, `tmux`, `warp`, `visual-studio-code`, `python`, `node`, `yarn`
-- Sets the default shell to zsh (if it isn't already)
-- Runs `gh auth login` (if not already authenticated)
-- Initializes the `zsh/pure` submodule
-- Symlinks `git/gitconfig`, `git/gitignore`, `tmux/tmux.conf`, `vim/vimrc`, `vim`,
-  and `vim/init.vim` (for neovim) into `$HOME`
+`rebuild.sh` points `~/.dotfiles` at whatever directory it runs from, then calls
+`darwin-rebuild switch`. Every link in `home.nix` resolves through `~/.dotfiles`,
+so the repo works from any path.
 
-# Tmux
-- Install TPM: `git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm`
-- Install the plugins within tmux session `C-a I`
+Afterwards, authenticate the GitHub CLI once: `gh auth login`.
 
+## Daily use
 
-## VSCode
-- `rm -rf "$HOME"/Library/Application\ Support/Code/User/settings.json`
-- `ln -s "$HOME"/.rjparton_config/vscode/settings.json "$HOME"/Library/Application\ Support/Code/User/settings.json`
-- Theme: Tokyo Night
+Apply a config change:
 
-### Install Extensions
-- vim
-- rewrap
-- prettier
-- black
-- autopep8
-- emmet jss
-- eslint
-- c/c++
-- gitlens
-- material icon theme
-- tokyo night
-- python
+```bash
+./rebuild.sh
+```
+
+Update packages. Name the input, because a bare `nix flake update` also moves the
+pinned stable branch:
+
+```bash
+nix flake update nixpkgs-unstable && ./rebuild.sh
+```
+
+Roll back a bad rebuild:
+
+```bash
+sudo darwin-rebuild --rollback
+```
+
+## Layout
+
+| Path | Holds |
+|------|-------|
+| `flake.nix` | Inputs and the `mac` configuration. Also the opencode overlay. |
+| `configuration.nix` | System settings: macOS defaults, Homebrew formulae and casks. |
+| `home.nix` | User packages, zsh, starship, and every dotfile link. |
+| `home/` | The actual config files. Symlinked into `$HOME`, so edits apply immediately. |
+
+`home/AGENTS.md` is one file read by three tools: Claude Code, Codex, and
+opencode each get a symlink to it.
+
+## Versions
+
+`nixpkgs` tracks the stable `26.05-darwin` branch. Stable freezes package
+versions at release, which strands a tool that ships several times a week, so
+`flake.nix` overlays **opencode alone** from `nixpkgs-unstable`. Nothing else
+comes from unstable.
+
+## Manual steps
+
+Nix cannot set these:
+
+- Map caps lock to control: System Settings > Keyboard > Modifier Keys.
+- Mouse: thumb buttons to desktop left/right, wheel to Mission Control, top
+  button to screen capture.
+
+Key repeat rate, dark mode, dock auto-hide, and Finder defaults are all declared
+in `configuration.nix`.
+
+## Credit
+
+The Nix setup began as a fork of [kunchenguid/dotfiles](https://github.com/kunchenguid/dotfiles) (MIT-0).
+The git aliases came from Tullie Murrell's dotfiles.

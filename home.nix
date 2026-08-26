@@ -53,6 +53,7 @@ in
       cc = "claude --dangerously-skip-permissions";
       co = "codex --full-auto";
       oc = "opencode --auto";
+      opencode = "opencode --auto";
       v = "nvim";
       vim = "nvim";
     };
